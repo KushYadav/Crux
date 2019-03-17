@@ -45,13 +45,14 @@ public class ClientBT {
 		System.out.println();
 		bt.removeLeaf();
 		bt.display();
+		System.out.println("Size after removing leaf: "+bt.getSize());
 		int[] pre = { 10, 20, 40, 50, 30, 60, 70 };
 		int[] in = { 40, 20, 50, 10, 60, 30, 70 };
 		int[] post = { 40, 50, 20, 60, 70, 30, 10 };
 //		BinaryTree construct=new BinaryTree(pre, in);
 		BinaryTree construct=new BinaryTree(post, in);
 		construct.display();
-
+		
 	}
 
 }

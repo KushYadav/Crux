@@ -1,10 +1,11 @@
-package com.example.hp.crux.datastructures.trees.binarytree;
+package com.example.hp.crux.datastructures.trees.bst;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Stack;
 
-public class BinaryTree {
+public class BST {
 	private class Node {
 		private int data;
 		private Node left;
@@ -14,7 +15,7 @@ public class BinaryTree {
 	private int size;
 	private Node root;
 
-	public BinaryTree() {
+	public BST() {
 		Scanner scn = new Scanner(System.in);
 		root = takeInput(null, false, scn);
 	}
@@ -388,71 +389,6 @@ public class BinaryTree {
 		return sendBack;
 	}
 
-	private class BSTMover {
-		private Node largestNode;
-		private int max;
-		private int min;
-		private int size;
-		private boolean isBST;
-	}
-
-	public void largestBST() {
-		BSTMover bstm = largestBST(root);
-		System.out.println("Node of Largest BST is: " + bstm.largestNode.data);
-		System.out.println("Size of Largest BST is: " + bstm.size);
-	}
-
-	private BSTMover largestBST(Node node) {
-		if (node == null) {
-			BSTMover bstm = new BSTMover();
-			bstm.isBST = true;
-			bstm.largestNode = null;
-			bstm.max = Integer.MIN_VALUE;
-			bstm.min = Integer.MAX_VALUE;
-			bstm.size = 0;
-			return bstm;
-		}
-		BSTMover sendBack = new BSTMover();
-		BSTMover left = largestBST(node.left);
-		BSTMover right = largestBST(node.right);
-
-		if (left.isBST && right.isBST && node.data > left.max && node.data < right.min) {
-			sendBack.largestNode = node;
-			sendBack.isBST = true;
-			sendBack.size = left.size + right.size + 1;
-			sendBack.max = Math.max(node.data, left.max);
-			sendBack.min = Math.min(node.data, right.min);
-		} else {
-			sendBack.isBST = false;
-			BSTMover previousLargest = left.size > right.size ? left : right;
-			sendBack.size = previousLargest.size;
-			sendBack.largestNode = previousLargest.largestNode;
-			sendBack.max = previousLargest.max;
-			sendBack.min = previousLargest.min;
-		}
-		return sendBack;
-	}
-
-	public void printDoesntHaveSibling() {
-		System.out.print("Nodes Having no siblings are: ");
-		printDoesntHaveSibling(root, null, false);
-	}
-
-	private void printDoesntHaveSibling(Node node, Node parent, boolean ilc) {
-		if (node == null) {
-			return;
-		}
-		if (parent != null) {
-			if (ilc == true && parent.right == null) {
-				System.out.print(node.data + " ");
-			} else if (ilc == false && parent.left == null) {
-				System.out.print(node.data + " ");
-			}
-		}
-		printDoesntHaveSibling(node.left, node, true);
-		printDoesntHaveSibling(node.right, node, false);
-	}
-
 	public void removeLeaf() {
 		removeLeaf(root, null, false);
 	}
@@ -474,51 +410,168 @@ public class BinaryTree {
 		removeLeaf(node.right, node, false);
 	}
 
-	public BinaryTree(int[] pre, int[] in) {
-//		this.root = constructPreIn(pre, 0, pre.length - 1, in, 0, in.length - 1);
-		this.root = constructPostIn(pre, 0, pre.length - 1, in, 0, in.length - 1);
+	public BST(int[] in) {
+		this.root = constructBST(in, 0, in.length - 1);
 	}
 
-	private Node constructPreIn(int[] pre, int plo, int phi, int[] in, int ilo, int ihi) {
-		if (plo > phi || ilo > ihi) {
+	private Node constructBST(int[] in, int lo, int hi) {
+		if (lo > hi) {
 			return null;
 		}
-
+		int mid = (lo + hi) / 2;
 		Node node = new Node();
+		node.data = in[mid];
 		size++;
-		node.data = pre[plo];
-		int searchIdx = -1;
-		for (int i = ilo; i <= ihi; i++) {
-			if (in[i] == pre[plo]) {
-				searchIdx = i;
-				break;
-			}
-		}
-		int nele = searchIdx - ilo;
-		node.left = constructPreIn(pre, plo + 1, plo + nele, in, ilo, searchIdx - 1);
-		node.right = constructPreIn(pre, plo + 1 + nele, phi, in, searchIdx + 1, ihi);
+		node.left = constructBST(in, lo, mid - 1);
+		node.right = constructBST(in, mid + 1, hi);
 		return node;
 	}
 
-	private Node constructPostIn(int[] pre, int plo, int phi, int[] in, int ilo, int ihi) {
-		if (plo > phi || ilo > ihi) {
-			return null;
+	public int getMax() {
+		return getMax(root).data;
+	}
+
+	private Node getMax(Node node) {
+		if (node.right == null) {
+			return node;
+		} else {
+			return getMax(node.right);
 		}
+	}
 
-		Node node = new Node();
-		this.size++;
-		node.data = pre[phi];
+	public ArrayList<Integer> listPreOrder() {
+		ArrayList<Integer> preOrder = new ArrayList<>();
+		listPreOrder(preOrder, root);
+		return preOrder;
+	}
 
-		int srchIndex = -1;
-		for (int i = ilo; i <= ihi; i++) {
-			if (in[i] == pre[phi]) {
-				srchIndex = i;
-				break;
+	private void listPreOrder(ArrayList<Integer> preOrder, Node node) {
+		if (node == null) {
+			return;
+		}
+		preOrder.add(node.data);
+		listPreOrder(preOrder, node.left);
+		listPreOrder(preOrder, node.right);
+	}
+
+	public ArrayList<Integer> listInOrder() {
+		ArrayList<Integer> inorder = new ArrayList<>();
+		listInOrder(inorder, root);
+		return inorder;
+
+	}
+
+	private void listInOrder(ArrayList<Integer> inorder, Node node) {
+		if (node == null) {
+			return;
+		}
+		listInOrder(inorder, node.left);
+		inorder.add(node.data);
+		listInOrder(inorder, node.right);
+	}
+
+	public ArrayList<Integer> listPostOrder() {
+		ArrayList<Integer> postOrder = new ArrayList<>();
+		listPostOrder(postOrder, root);
+		return postOrder;
+
+	}
+
+	private void listPostOrder(ArrayList<Integer> postOrder, Node node) {
+		if (node == null) {
+			return;
+		}
+		listPostOrder(postOrder, node.left);
+		listPostOrder(postOrder, node.right);
+		postOrder.add(node.data);
+	}
+
+	public class heapmover {
+		int sum;
+	}
+
+	public void rwsol() { // Assign sum to the value of node starting from right
+		heapmover mover = new heapmover();
+		rwsol(mover, root);
+	}
+
+	private void rwsol(heapmover mover, Node node) {
+		if (node == null) {
+			return;
+		}
+		rwsol(mover, node.right);
+		int temp = node.data;
+		node.data = mover.sum;
+		mover.sum += temp;
+		rwsol(mover, node.left);
+	}
+
+	public void pir(int lo, int hi) {
+		pir(root, lo, hi);
+	}
+
+	private void pir(Node node, int lo, int hi) {
+		if (node == null) {
+			return;
+		}
+		if (node.data < lo) {
+			pir(node.right, lo, hi);
+		} else if (node.data > hi) {
+			pir(node.left, lo, hi);
+		} else {
+			System.out.print(node.data + " ");
+			pir(node.left, lo, hi);
+			pir(node.right, lo, hi);
+		}
+	}
+
+	public void addNode(int value) {
+		addNode(root, value);
+	}
+
+	private void addNode(Node node, int value) {
+		if (value < node.data && node.left == null) {
+			Node add = new Node();
+			add.data = value;
+			node.left = add;
+			size++;
+		}
+		if (value > node.data && node.right == null) {
+			Node add = new Node();
+			add.data = value;
+			node.right = add;
+			size++;
+		}
+		if (value < node.data) {
+			addNode(node.left, value);
+		}
+		if (value > node.data) {
+			addNode(node.right, value);
+		}
+	}
+
+	public void removeNode(int value) {
+		removeNode(null, root, false, value);
+	}
+
+	private void removeNode(Node parent, Node child, boolean ilc, int value) {
+		if (value > child.data) {
+			removeNode(child, child.right, false, value);
+		} else if (value < child.data) {
+			removeNode(child, child.left, true, value);
+		} else {
+			if (child.left != null && child.right != null) {
+				int lm = max(child.left);
+				child.data = lm;
+				removeNode(child, child.left, true, lm);
+			} else {
+				size--;
+				if (ilc) {
+					parent.left = child.left != null ? child.left : child.right;
+				} else {
+					parent.right = child.left != null ? child.left : child.right;
+				}
 			}
 		}
-		int nele = srchIndex - ilo;
-		node.left = constructPostIn(pre, plo, plo + nele - 1, in, ilo, srchIndex - 1);
-		node.right = constructPostIn(pre, plo + nele, phi - 1, in, srchIndex + 1, ihi);
-		return node;
 	}
 }
