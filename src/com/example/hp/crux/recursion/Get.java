@@ -18,7 +18,7 @@ public class Get {
 		System.out.println(isValidPath(0, 10, snl, dices, 0));
 	}
 
-	public static ArrayList<String> getBoardPaths(int curr, int end) {
+	private static ArrayList<String> getBoardPaths(int curr, int end) {
 		if (curr == end) {
 			ArrayList<String> fl = new ArrayList<>();
 			fl.add("");
@@ -37,7 +37,7 @@ public class Get {
 		return nl;
 	}
 
-	public static ArrayList<String> getMazePath(int cr, int cc, int er, int ec) {
+	private static ArrayList<String> getMazePath(int cr, int cc, int er, int ec) {
 		if (cc == ec && cr == er) {
 			ArrayList<String> fl = new ArrayList<>();
 			fl.add("");
@@ -59,7 +59,7 @@ public class Get {
 		return nl;
 	}
 
-	public static ArrayList<String> getMazePathWD(int cr, int cc, int er, int ec) {
+	private static ArrayList<String> getMazePathWD(int cr, int cc, int er, int ec) {
 		if (cc == ec && cr == er) {
 			ArrayList<String> fl = new ArrayList<>();
 			fl.add("");
@@ -87,7 +87,7 @@ public class Get {
 		return nl;
 	}
 
-	public static ArrayList<String> getMultiStepMazePathWD(int cr, int cc, int er, int ec) {
+	private static ArrayList<String> getMultiStepMazePathWD(int cr, int cc, int er, int ec) {
 		if (cc == ec && cr == er) {
 			ArrayList<String> fl = new ArrayList<>();
 			fl.add("");
@@ -140,7 +140,7 @@ public class Get {
 		return nl;
 	}
 
-	public static boolean isValidPath(int curr, int end, int[] snl, int[] dices, int vidx) {
+	private static boolean isValidPath(int curr, int end, int[] snl, int[] dices, int vidx) {
 		if (curr == end) {
 			return true;
 		}
